@@ -210,6 +210,43 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     );
   }
 
+  GestureDetector _buildMirrorButton(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double buttonPadding,
+  ) {
+    return GestureDetector(
+      onTap: _toggleMirror,
+      child: AnimatedOpacity(
+        opacity: _hideStuff ? 0.0 : 1.0,
+        duration: Duration(milliseconds: 300),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 10.0),
+            child: Container(
+              height: barHeight,
+              padding: EdgeInsets.only(
+                left: buttonPadding,
+                right: buttonPadding,
+              ),
+              color: backgroundColor,
+              child: Center(
+                child: Text('镜像', style: TextStyle(
+                  color: iconColor,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1
+                ),)
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Expanded _buildHitArea() {
     return Expanded(
       child: GestureDetector(
@@ -400,10 +437,19 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                   backgroundColor, iconColor, barHeight, buttonPadding)
               : Container(),
           Expanded(child: Container()),
-          chewieController.allowMuting
-              ? _buildMuteButton(controller, backgroundColor, iconColor,
+          Row(
+            children: <Widget>[
+              chewieController.allowMirror
+                  ? _buildMirrorButton(
+                  backgroundColor, iconColor, barHeight, buttonPadding)
+                  : Container(),
+              SizedBox(width: 12.0,),
+              chewieController.allowMuting
+                  ? _buildMuteButton(controller, backgroundColor, iconColor,
                   barHeight, buttonPadding)
-              : Container(),
+                  : Container(),
+            ],
+          ),
         ],
       ),
     );
@@ -449,6 +495,10 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         });
       });
     });
+  }
+
+  void _toggleMirror() {
+    chewieController.toggleMirror();
   }
 
   Widget _buildProgressBar() {

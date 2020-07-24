@@ -36,16 +36,19 @@ class Chewie extends StatefulWidget {
 
 class ChewieState extends State<Chewie> {
   bool _isFullScreen = false;
+  bool _isMirror = false;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(listener);
+    widget.controller.addListener(mirrorListener);
   }
 
   @override
   void dispose() {
     widget.controller.removeListener(listener);
+    widget.controller.removeListener(mirrorListener);
     super.dispose();
   }
 
@@ -67,11 +70,19 @@ class ChewieState extends State<Chewie> {
     }
   }
 
+  void mirrorListener(){
+    if(mounted){
+      setState(() {
+        _isMirror = widget.controller.isMirror;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _ChewieControllerProvider(
       controller: widget.controller,
-      child: PlayerWithControls(),
+      child: PlayerWithControls(isMirror: _isMirror,),
     );
   }
 
@@ -164,6 +175,7 @@ class ChewieState extends State<Chewie> {
 /// player, please use the standard information provided by the
 /// `VideoPlayerController`.
 class ChewieController extends ChangeNotifier {
+
   ChewieController({
     this.videoPlayerController,
     this.aspectRatio,
@@ -181,6 +193,7 @@ class ChewieController extends ChangeNotifier {
     this.customControls,
     this.errorBuilder,
     this.allowedScreenSleep = true,
+    this.allowMirror = true,
     this.isLive = false,
     this.allowFullScreen = true,
     this.allowMuting = true,
@@ -253,6 +266,8 @@ class ChewieController extends ChangeNotifier {
   /// Defines if the player will sleep in fullscreen or not
   final bool allowedScreenSleep;
 
+  final bool allowMirror;
+
   /// Defines if the controls should be for live stream video
   final bool isLive;
 
@@ -279,11 +294,16 @@ class ChewieController extends ChangeNotifier {
     return chewieControllerProvider.controller;
   }
 
+  bool _isMirror = false;
+
+  bool get isMirror => _isMirror;
+
   bool _isFullScreen = false;
 
   bool get isFullScreen => _isFullScreen;
 
   bool get isPlaying => videoPlayerController.value.isPlaying;
+
 
   Future _initialize() async {
     await videoPlayerController.setLooping(looping);
@@ -315,6 +335,11 @@ class ChewieController extends ChangeNotifier {
       enterFullScreen();
       videoPlayerController.removeListener(_fullScreenListener);
     }
+  }
+
+  void toggleMirror(){
+    _isMirror = !_isMirror;
+    notifyListeners();
   }
 
   void enterFullScreen() {
