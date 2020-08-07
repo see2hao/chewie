@@ -33,14 +33,15 @@ class _ChewieDemoState extends State<ChewieDemo> {
   void initState() {
     super.initState();
     _videoPlayerController1 = VideoPlayerController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
+        'http://teststatic.weui.com/short/video/202007/1f640c70-98c0-48a6-8176-02e612e9393e.mp4');
     _videoPlayerController2 = VideoPlayerController.network(
-        'https://www.sample-videos.com/video123/mp4/480/big_buck_bunny_480p_20mb.mp4');
+        'http://teststatic.weui.com/short/video/202007/1f640c70-98c0-48a6-8176-02e612e9393e.mp4');
     _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController1,
-        aspectRatio: 3 / 2,
+        aspectRatio: 2 / 3,
         autoPlay: true,
         looping: true,
+        showControls: true,
         routePageBuilder: (BuildContext context, Animation<double> animation,
             Animation<double> secondAnimation, provider) {
           return AnimatedBuilder(
@@ -87,9 +88,9 @@ class _ChewieDemoState extends State<ChewieDemo> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: widget.title,
-      theme: ThemeData.light().copyWith(
-        platform: _platform ?? Theme.of(context).platform,
-      ),
+//      theme: ThemeData.light().copyWith(
+//        platform: _platform ?? Theme.of(context).platform,
+//      ),
       home: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -208,7 +209,6 @@ class _VideoScaffoldState extends State<VideoScaffold> {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
-    AutoOrientation.landscapeMode();
     super.initState();
   }
 
@@ -218,7 +218,6 @@ class _VideoScaffoldState extends State<VideoScaffold> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    AutoOrientation.portraitMode();
     super.dispose();
   }
 

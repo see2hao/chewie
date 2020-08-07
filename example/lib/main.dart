@@ -1,3 +1,4 @@
+import 'package:auto_orientation/auto_orientation.dart';
 import 'package:chewie/chewie.dart';
 import 'package:chewie/src/chewie_player.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,16 +32,16 @@ class _ChewieDemoState extends State<ChewieDemo> {
   void initState() {
     super.initState();
     _videoPlayerController1 = VideoPlayerController.network(
-        'https://www.w3school.com.cn/example/html5/mov_bbb.mp4');
+        'http://teststatic.weui.com/short/video/202007/1f640c70-98c0-48a6-8176-02e612e9393e.mp4');
     _videoPlayerController2 = VideoPlayerController.network(
-        'https://www.w3school.com.cn/example/html5/mov_bbb.mp4');
+        'http://teststatic.weui.com/short/video/202007/1f640c70-98c0-48a6-8176-02e612e9393e.mp4');
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController1,
       aspectRatio: 3 / 2,
       autoPlay: true,
       looping: true,
       allowMirror: true,
-      showControls: false
+      showControls: true
       // Try playing around with some of these other options:
 
       // showControls: false,
@@ -69,9 +70,9 @@ class _ChewieDemoState extends State<ChewieDemo> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: widget.title,
-      theme: ThemeData.light().copyWith(
-        platform: _platform ?? Theme.of(context).platform,
-      ),
+//      theme: ThemeData.light().copyWith(
+//        platform: _platform ?? Theme.of(context).platform,
+//      ),
       home: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -142,6 +143,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
                 Expanded(
                   child: FlatButton(
                     onPressed: () {
+                      AutoOrientation.landscapeLeftMode();
                       setState(() {
                         _platform = TargetPlatform.android;
                       });
@@ -155,6 +157,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
                 Expanded(
                   child: FlatButton(
                     onPressed: () {
+                      AutoOrientation.portraitAutoMode();
                       setState(() {
                         _platform = TargetPlatform.iOS;
                       });

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:auto_orientation/auto_orientation.dart';
 
 typedef Widget ChewieRoutePageBuilder(
     BuildContext context,
@@ -65,6 +66,7 @@ class ChewieState extends State<Chewie> {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen) {
+      AutoOrientation.portraitAutoMode();
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
     }
@@ -138,11 +140,9 @@ class ChewieState extends State<Chewie> {
     );
 
     SystemChrome.setEnabledSystemUIOverlays([]);
-    if (isAndroid) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+
+    if(widget.controller.aspectRatio > 1.0){
+      AutoOrientation.landscapeLeftMode();
     }
 
     if (!widget.controller.allowedScreenSleep) {
