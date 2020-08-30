@@ -62,10 +62,11 @@ class ChewieState extends State<Chewie> {
   }
 
   void listener() async {
+    /// 如果isFullScreen
     if (widget.controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);
-    } else if (_isFullScreen) {
+    } else if (widget.controller.isFullScreen == false && _isFullScreen) {
       AutoOrientation.portraitAutoMode();
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
@@ -116,13 +117,13 @@ class ChewieState extends State<Chewie> {
   }
 
   Widget _fullScreenRoutePageBuilder(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      ) {
     var controllerProvider = _ChewieControllerProvider(
       controller: widget.controller,
-      child: PlayerWithControls(),
+      child: PlayerWithControls(isMirror: _isMirror),
     );
 
     if (widget.controller.routePageBuilder == null) {
@@ -206,7 +207,7 @@ class ChewieController extends ChangeNotifier {
     ],
     this.routePageBuilder = null,
   }) : assert(videoPlayerController != null,
-            'You must provide a controller to play a video') {
+  'You must provide a controller to play a video') {
     _initialize();
   }
 
@@ -288,8 +289,8 @@ class ChewieController extends ChangeNotifier {
 
   static ChewieController of(BuildContext context) {
     final chewieControllerProvider =
-        context.inheritFromWidgetOfExactType(_ChewieControllerProvider)
-            as _ChewieControllerProvider;
+    context.inheritFromWidgetOfExactType(_ChewieControllerProvider)
+    as _ChewieControllerProvider;
 
     return chewieControllerProvider.controller;
   }

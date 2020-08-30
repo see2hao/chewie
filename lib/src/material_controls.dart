@@ -32,21 +32,53 @@ class _MaterialControlsState extends State<MaterialControls> {
   VideoPlayerController controller;
   ChewieController chewieController;
 
+  void _toggleMirror() {
+    chewieController.toggleMirror();
+  }
+
+  GestureDetector _buildMirrorButton() {
+    return GestureDetector(
+      onTap: _toggleMirror,
+      child: AnimatedOpacity(
+        opacity: _hideStuff ? 0.0 : 1.0,
+        duration: Duration(milliseconds: 300),
+        child: Container(
+            height: barHeight,
+            color: Theme
+                .of(context)
+                .dialogBackgroundColor,
+            padding: EdgeInsets.only(
+              left: 8.0,
+              right: 8.0,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '镜像',
+              style: TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1),
+            )
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_latestValue.hasError) {
       return chewieController.errorBuilder != null
           ? chewieController.errorBuilder(
-              context,
-              chewieController.videoPlayerController.value.errorDescription,
-            )
+        context,
+        chewieController.videoPlayerController.value.errorDescription,
+      )
           : Center(
-              child: Icon(
-                Icons.error,
-                color: Colors.white,
-                size: 42,
-              ),
-            );
+        child: Icon(
+          Icons.error,
+          color: Colors.white,
+          size: 42,
+        ),
+      );
     }
 
     return MouseRegion(
@@ -56,23 +88,31 @@ class _MaterialControlsState extends State<MaterialControls> {
       child: GestureDetector(
         onTap: () => _cancelAndRestartTimer(),
         child: AbsorbPointer(
-          absorbing: _hideStuff,
-          child: Column(
-            children: <Widget>[
-              _latestValue != null &&
-                          !_latestValue.isPlaying &&
-                          _latestValue.duration == null ||
-                      _latestValue.isBuffering
-                  ? const Expanded(
+            absorbing: _hideStuff,
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    _latestValue != null &&
+                        !_latestValue.isPlaying &&
+                        _latestValue.duration == null ||
+                        _latestValue.isBuffering
+                        ? const Expanded(
                       child: const Center(
                         child: const CircularProgressIndicator(),
                       ),
                     )
-                  : _buildHitArea(),
-              _buildBottomBar(context),
-            ],
-          ),
-        ),
+                        : _buildHitArea(),
+                    _buildBottomBar(context),
+                  ],
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: _buildMirrorButton(),
+                ),
+              ],
+            )),
       ),
     );
   }
@@ -104,17 +144,21 @@ class _MaterialControlsState extends State<MaterialControls> {
     super.didChangeDependencies();
   }
 
-  AnimatedOpacity _buildBottomBar(
-    BuildContext context,
-  ) {
-    final iconColor = Theme.of(context).textTheme.button.color;
+  AnimatedOpacity _buildBottomBar(BuildContext context,) {
+    final iconColor = Theme
+        .of(context)
+        .textTheme
+        .button
+        .color;
 
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: Duration(milliseconds: 300),
       child: Container(
         height: barHeight,
-        color: Theme.of(context).dialogBackgroundColor,
+        color: Theme
+            .of(context)
+            .dialogBackgroundColor,
         child: Row(
           children: <Widget>[
             _buildPlayPause(controller),
@@ -183,14 +227,16 @@ class _MaterialControlsState extends State<MaterialControls> {
           child: Center(
             child: AnimatedOpacity(
               opacity:
-                  _latestValue != null && !_latestValue.isPlaying && !_dragging
-                      ? 1.0
-                      : 0.0,
+              _latestValue != null && !_latestValue.isPlaying && !_dragging
+                  ? 1.0
+                  : 0.0,
               duration: Duration(milliseconds: 300),
               child: GestureDetector(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).dialogBackgroundColor,
+                    color: Theme
+                        .of(context)
+                        .dialogBackgroundColor,
                     borderRadius: BorderRadius.circular(48.0),
                   ),
                   child: Padding(
@@ -206,9 +252,7 @@ class _MaterialControlsState extends State<MaterialControls> {
     );
   }
 
-  GestureDetector _buildMuteButton(
-    VideoPlayerController controller,
-  ) {
+  GestureDetector _buildMuteButton(VideoPlayerController controller,) {
     return GestureDetector(
       onTap: () {
         _cancelAndRestartTimer();
@@ -324,12 +368,9 @@ class _MaterialControlsState extends State<MaterialControls> {
 
   void _playPause() {
     bool isFinished;
-    if( _latestValue.duration != null)
-    {
+    if (_latestValue.duration != null) {
       isFinished = _latestValue.position >= _latestValue.duration;
-    }
-    else
-    {
+    } else {
       isFinished = false;
     }
 
@@ -391,10 +432,18 @@ class _MaterialControlsState extends State<MaterialControls> {
           },
           colors: chewieController.materialProgressColors ??
               ChewieProgressColors(
-                  playedColor: Theme.of(context).accentColor,
-                  handleColor: Theme.of(context).accentColor,
-                  bufferedColor: Theme.of(context).backgroundColor,
-                  backgroundColor: Theme.of(context).disabledColor),
+                  playedColor: Theme
+                      .of(context)
+                      .accentColor,
+                  handleColor: Theme
+                      .of(context)
+                      .accentColor,
+                  bufferedColor: Theme
+                      .of(context)
+                      .backgroundColor,
+                  backgroundColor: Theme
+                      .of(context)
+                      .disabledColor),
         ),
       ),
     );
