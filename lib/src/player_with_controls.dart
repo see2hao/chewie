@@ -8,11 +8,46 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:math' as math;
 
-class PlayerWithControls extends StatelessWidget {
+class PlayerWithControls extends StatefulWidget {
 
-  const PlayerWithControls({Key key, this.isMirror}) : super(key: key);
+  PlayerWithControls({@required this.controller, Key key}) : super(key: key);
 
-  final bool isMirror;
+  final ChewieController controller;
+
+  @override
+  _PlayerWithControlsState createState() => _PlayerWithControlsState();
+}
+
+class _PlayerWithControlsState extends State<PlayerWithControls> {
+  bool _isMirror = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(mirrorListener);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(mirrorListener);
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(PlayerWithControls oldWidget) {
+    if (oldWidget.controller != widget.controller) {
+      widget.controller.addListener(mirrorListener);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void mirrorListener() {
+    if (mounted) {
+      setState(() {
+        _isMirror = widget.controller.isMirror;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +59,14 @@ class PlayerWithControls extends StatelessWidget {
         child: AspectRatio(
           aspectRatio:
               chewieController.aspectRatio ?? _calculateAspectRatio(context),
-          child: _buildPlayerWithControls(chewieController, context, isMirror),
+          child: _buildPlayerWithControls(chewieController, context),
         ),
       ),
     );
   }
 
   Container _buildPlayerWithControls(
-      ChewieController chewieController, BuildContext context, bool isMirror) {
+      ChewieController chewieController, BuildContext context) {
     print(chewieController.isMirror);
     return Container(
       child: Stack(
@@ -39,14 +74,14 @@ class PlayerWithControls extends StatelessWidget {
           chewieController.placeholder ?? Container(),
           Center(
             child: AspectRatio(
-              aspectRatio: chewieController.aspectRatio ??
-                  _calculateAspectRatio(context),
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.rotationY(math.pi*(isMirror == true?1:2)),
-                child: VideoPlayer(chewieController.videoPlayerController),
-              )
-            ),
+                aspectRatio: chewieController.aspectRatio ??
+                    _calculateAspectRatio(context),
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform:
+                      Matrix4.rotationY(math.pi * (_isMirror == true ? 1 : 2)),
+                  child: VideoPlayer(chewieController.videoPlayerController),
+                )),
           ),
           chewieController.overlay ?? Container(),
           _buildControls(context, chewieController),

@@ -37,19 +37,16 @@ class Chewie extends StatefulWidget {
 
 class ChewieState extends State<Chewie> {
   bool _isFullScreen = false;
-  bool _isMirror = false;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(listener);
-    widget.controller.addListener(mirrorListener);
   }
 
   @override
   void dispose() {
     widget.controller.removeListener(listener);
-    widget.controller.removeListener(mirrorListener);
     super.dispose();
   }
 
@@ -73,19 +70,11 @@ class ChewieState extends State<Chewie> {
     }
   }
 
-  void mirrorListener(){
-    if(mounted){
-      setState(() {
-        _isMirror = widget.controller.isMirror;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return _ChewieControllerProvider(
       controller: widget.controller,
-      child: PlayerWithControls(isMirror: _isMirror,),
+      child: PlayerWithControls(controller: widget?.controller,),
     );
   }
 
@@ -123,7 +112,7 @@ class ChewieState extends State<Chewie> {
       ) {
     var controllerProvider = _ChewieControllerProvider(
       controller: widget.controller,
-      child: PlayerWithControls(isMirror: _isMirror),
+      child: PlayerWithControls(controller: widget?.controller,),
     );
 
     if (widget.controller.routePageBuilder == null) {
